@@ -15,9 +15,11 @@
 import asyncio
 import logging
 import sys
+import time
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Type
 
+from ...metric import Metrics
 from .... import oscar as mo
 from ....core import ChunkGraph, OperandType, enter_mode
 from ....core.context import get_context, set_context
@@ -99,6 +101,12 @@ class SubtaskProcessor:
         self._storage_api = storage_api
         self._meta_api = meta_api
 
+        # metrics
+        self._subtask_execution_time = Metrics.gauge(
+           'subtask_execution_time_ms',
+           'Execution time in milliseconds of a subtask',
+            ('session_id', 'subtask_id',))
+
     @property
     def status(self):
         return self.result.status
@@ -174,7 +182,13 @@ class SubtaskProcessor:
     def _execute_operand(
         self, ctx: Dict[str, Any], op: OperandType
     ):  # noqa: R0201  # pylint: disable=no-self-use
-        return execute(ctx, op)
+            start_time = time.time()
+            return execute(ctx, op)
+            self._subtask_execution_time.record(time.time() - start_time,
+                                                {'session_id': self._session_id,
+                                                 'subtask_id':
+                                                     self.subtask.subtask_id})
+            return result
 
     async def _execute_graph(self, chunk_graph: ChunkGraph):
         loop = asyncio.get_running_loop()
