@@ -182,13 +182,7 @@ class SubtaskProcessor:
     def _execute_operand(
         self, ctx: Dict[str, Any], op: OperandType
     ):  # noqa: R0201  # pylint: disable=no-self-use
-            start_time = time.time()
-            return execute(ctx, op)
-            self._subtask_execution_time.record(time.time() - start_time,
-                                                {'session_id': self._session_id,
-                                                 'subtask_id':
-                                                     self.subtask.subtask_id})
-            return result
+        return execute(ctx, op)
 
     async def _execute_graph(self, chunk_graph: ChunkGraph):
         loop = asyncio.get_running_loop()
@@ -456,6 +450,7 @@ class SubtaskProcessor:
         self.is_done.set()
 
     async def run(self):
+        start_time = time.time()
         self.result.status = SubtaskStatus.running
         input_keys = None
         unpinned = False
@@ -503,6 +498,11 @@ class SubtaskProcessor:
                 await self._unpin_data(input_keys)
 
         await self.done()
+        if self.result.status == SubtaskStatus.succeeded:
+            self._subtask_execution_time.record(time.time() - start_time,
+                                                {'session_id': self._session_id,
+                                                 'subtask_id':
+                                                     self.subtask.subtask_id})
         report_progress.cancel()
         try:
             await report_progress
