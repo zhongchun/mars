@@ -22,6 +22,7 @@ import threading
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Dict, List, Type, TypeVar, Coroutine, Callable, Union, Optional
 
+from mars.metric import init_metrics
 from ...core.entrypoints import init_extension_entrypoints
 from ...utils import implements, to_binary
 from ...utils import lazy_import, register_asyncio_task_timeout_detector
@@ -143,6 +144,7 @@ class AbstractActorPool(ABC):
         )
         # load third party extensions.
         init_extension_entrypoints()
+		init_metrics(self._config.get_global_config())
 
     @property
     def router(self):
@@ -1231,6 +1233,7 @@ async def create_actor_pool(
         address, n_process=n_process, ports=ports
     )
     actor_pool_config = ActorPoolConfig()
+    actor_pool_config.add_global_config(kwargs.get('_global_config', {}))
     # add main config
     process_index_gen = pool_cls.process_index_gen(address)
     main_process_index = next(process_index_gen)

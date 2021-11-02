@@ -8,7 +8,6 @@ services:
   - subtask
   - task
   - mutable
-  - metric
 cluster:
   backend: fixed
   node_timeout: 120
@@ -35,5 +34,7 @@ scheduling:
     max_workers: 100
     scheduler_backlog_timeout: 60
     worker_idle_timeout: 120
-metric:
-  backend: console
+
+global_config:
+  metric:
+    backend: console

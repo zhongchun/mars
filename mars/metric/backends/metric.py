@@ -32,7 +32,7 @@ class Metric(ABC):
     """Base class of metrics."""
     _type = None
 
-    def __init__(self, name: str, description: str = "",
+    def __init__(self, name: str, description: str = '',
                  tag_keys: Optional[Tuple[str]] = None):
         self._name = name
         self._description = description
@@ -78,7 +78,7 @@ class Counter(Metric, ABC):
 
     _type = 'counter'
 
-    def __init__(self, name: str, description: str = "",
+    def __init__(self, name: str, description: str = '',
                  tag_keys: Optional[Tuple[str]] = None):
         super().__init__(name, description, tag_keys)
         self._count = MutexValue()
@@ -104,7 +104,7 @@ class Meter(Metric, ABC):
 
     _type = 'meter'
 
-    def __init__(self, name: str, description: str = "",
+    def __init__(self, name: str, description: str = '',
                  tag_keys: Optional[Tuple[str]] = None):
         super().__init__(name, description, tag_keys)
         self._count = MutexValue()
@@ -126,7 +126,7 @@ class Histogram(Metric, ABC):
 
     _type = 'histogram'
 
-    def __init__(self, name: str, description: str = "",
+    def __init__(self, name: str, description: str = '',
                  tag_keys: Optional[Tuple[str]] = None):
         super().__init__(name, description, tag_keys)
         self._data = list()

@@ -198,8 +198,8 @@ class ClusterStateActor(mo.StatelessActor):
         start_time = time.time()
         band_to_slot = band_to_slot or self._band_to_slot
         worker_pool = await create_worker_actor_pool(
-            worker_address, self._band_to_slot, modules=self._worker_modules
-        )
+            worker_address, self._band_to_slot, modules=self._worker_modules,
+            _global_config=self._config.get('global_config', {}))
         logger.info(
             "Create worker node %s succeeds in %.4f seconds.",
             worker_address,
@@ -474,8 +474,8 @@ class RayCluster:
             n_process=supervisor_sub_pool_num,
             main_pool_cpus=0,
             sub_pool_cpus=0,
-            modules=supervisor_modules,
-        )
+            main_pool_cpus=0, sub_pool_cpus=0, modules=supervisor_modules,
+			_global_config=self._config.get('global_config', {}))
         logger.info("Create supervisor on node %s succeeds.", self.supervisor_address)
         self._cluster_backend = await RayClusterBackend.create(
             NodeRole.WORKER, self.supervisor_address, self.supervisor_address

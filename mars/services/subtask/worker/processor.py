@@ -19,7 +19,7 @@ import time
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Type
 
-from ...metric import Metrics
+from mars.metric import Metrics
 from .... import oscar as mo
 from ....core import ChunkGraph, OperandType, enter_mode
 from ....core.context import get_context, set_context
