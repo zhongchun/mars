@@ -103,8 +103,8 @@ class SubtaskProcessor:
 
         # metrics
         self._subtask_execution_time = Metrics.gauge(
-           'subtask_execution_time_ms',
-           'Execution time in milliseconds of a subtask',
+            'mars.subtask_execution_time_secs',
+            'Execution time in milliseconds of a subtask',
             ('session_id', 'subtask_id',))
 
     @property
@@ -499,7 +499,13 @@ class SubtaskProcessor:
 
         await self.done()
         if self.result.status == SubtaskStatus.succeeded:
-            self._subtask_execution_time.record(time.time() - start_time,
+            cost_time_secs = self.result.execution_end_time - \
+                             self.result.execution_start_time
+            logger.info(
+                'mars.subtask_execution_time_secs: %f, session_id: '
+                '%s, subtask_id: %s',
+                cost_time_secs, self._session_id, self.subtask.subtask_id)
+            self._subtask_execution_time.record(cost_time_secs,
                                                 {'session_id': self._session_id,
                                                  'subtask_id':
                                                      self.subtask.subtask_id})
