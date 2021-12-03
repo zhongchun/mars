@@ -104,8 +104,8 @@ class SubtaskProcessor:
         # metrics
         self._subtask_execution_time = Metrics.gauge(
             'mars.subtask_execution_time_secs',
-            'Execution time in milliseconds of a subtask',
-            ('session_id', 'subtask_id',))
+            'Time consuming in seconds to execute a subtask',
+            ('session_id', 'subtask_id', 'logic_id'))
 
     @property
     def status(self):
@@ -502,8 +502,8 @@ class SubtaskProcessor:
             cost_time_secs = self.result.execution_end_time - \
                              self.result.execution_start_time
             logger.info(
-                'mars.subtask_execution_time_secs: %f, session_id: '
-                '%s, subtask_id: %s',
+                'Time consuming to execute a subtask is %ss with session_id '
+                '%s, subtask_id %s',
                 cost_time_secs, self._session_id, self.subtask.subtask_id)
             self._subtask_execution_time.record(cost_time_secs,
                                                 {'session_id': self._session_id,

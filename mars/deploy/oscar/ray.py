@@ -402,6 +402,9 @@ class RayCluster:
         self.web_address = None
 
     async def start(self):
+        # init metrics to guarantee metrics use in driver
+        from mars.metric import init_metrics
+        init_metrics(self._config.get('global_config', {}))
         address_to_resources = dict()
         supervisor_standalone = (
             self._config.get("cluster", {})

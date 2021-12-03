@@ -45,6 +45,7 @@ from ...lib.aio import (
     new_isolation,
     stop_isolation,
 )
+from ...metric import Metrics
 from ...services.cluster import AbstractClusterAPI, ClusterAPI
 from ...services.lifecycle import AbstractLifecycleAPI, LifecycleAPI
 from ...services.meta import MetaAPI, AbstractMetaAPI
@@ -755,6 +756,12 @@ class _IsolatedSession(AbstractAsyncSession):
             register_asyncio_task_timeout_detector()
         )
 
+        # metrics
+        self._tileable_graph_gen_time = Metrics.gauge(
+            'mars.tileable_graph_gen_time_secs',
+            'Time consuming in seconds to generate a tileable graph',
+            ('address', 'session_id'))
+
     @classmethod
     async def _init(
         cls, address: str, session_id: str, new: bool = True, timeout: float = None
@@ -924,7 +931,15 @@ class _IsolatedSession(AbstractAsyncSession):
         ]
 
         # build tileable graph
+        start_time = time.time()
         tileable_graph = gen_submit_tileable_graph(self, tileables)
+        cost_time_secs = time.time() - start_time
+        logger.info(
+            'Time consuming to generate a tileable graph is %ss with address '
+            '%s, session id %s', cost_time_secs, self.address, self._session_id)
+        self._tileable_graph_gen_time.record(cost_time_secs,
+                                             {'address': self.address,
+                                              'session_id': self._session_id})
 
         # submit task
         task_id = await self._task_api.submit_tileable_graph(
