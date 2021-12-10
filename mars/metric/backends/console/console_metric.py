@@ -16,8 +16,13 @@ class SimpleMetric:
 
     def update(self, value: float = 1.0, tags: Optional[Dict[str, str]] = None):
         self._value = value
-        logger.info("metric name=%s, description=%s, value=%s, tags=%s",
-                    self._name, self._description, value, tags)
+        logger.debug(
+            "Reporting metric with name: %s, description: %s, value: %s, tags: %s",
+            self._name,
+            self._description,
+            value,
+            tags,
+        )
 
     @property
     def value(self):
