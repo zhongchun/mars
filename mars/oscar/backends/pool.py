@@ -144,7 +144,7 @@ class AbstractActorPool(ABC):
         )
         # load third party extensions.
         init_extension_entrypoints()
-        llinit_metrics(self._config.get_global_config())
+        init_metrics(self._config.get_global_config())
 
     @property
     def router(self):
