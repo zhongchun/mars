@@ -113,21 +113,25 @@ class TaskProcessor:
 
         # metrics
         self._chunk_graph_gen_time = Metrics.gauge(
-            'mars.chunk_graph_gen_time_secs',
-            'Time consuming in seconds to generate a chunk graph',
-            ('session_id', 'task_id'))
+            "mars.chunk_graph_gen_time_secs",
+            "Time consuming in seconds to generate a chunk graph",
+            ("session_id", "task_id"),
+        )
         self._subtask_graph_gen_time = Metrics.gauge(
-            'mars.subtask_graph_gen_time_secs',
-            'Time consuming in seconds to generate a subtask graph',
-            ('session_id', 'task_id', 'stage_id'))
+            "mars.subtask_graph_gen_time_secs",
+            "Time consuming in seconds to generate a subtask graph",
+            ("session_id", "task_id", "stage_id"),
+        )
         self._hbo_acquired_bands_time = Metrics.gauge(
-            'mars.hbo_acquired_bands_time_secs',
-            'Time consuming in seconds to acquire bands by hbo',
-            ('session_id', 'task_id', 'stage_id'))
+            "mars.hbo_acquired_bands_time_secs",
+            "Time consuming in seconds to acquire bands by hbo",
+            ("session_id", "task_id", "stage_id"),
+        )
         self._task_execution_time = Metrics.gauge(
-            'mars.task_execution_time_secs',
-            'Time consuming in seconds to execute a task',
-            ('session_id', 'task_id'))
+            "mars.task_execution_time_secs",
+            "Time consuming in seconds to execute a task",
+            ("session_id", "task_id"),
+        )
 
     @property
     def task_id(self):
@@ -364,12 +368,16 @@ class TaskProcessor:
                 return
 
         logger.info(
-            'Time consuming to gen a chunk graph is %ss with session id %s, '
-            'task id %s',
-            timer.duration, self._task.session_id, self._task.task_id)
-        self._chunk_graph_gen_time.record(timer.duration,
-                                          {'session_id': self._task.session_id,
-                                           'task_id': self._task.task_id})
+            "Time consuming to gen a chunk graph is %ss with session id %s, "
+            "task id %s",
+            timer.duration,
+            self._task.session_id,
+            self._task.task_id,
+        )
+        self._chunk_graph_gen_time.record(
+            timer.duration,
+            {"session_id": self._task.session_id, "task_id": self._task.task_id},
+        )
 
         stage_id = new_task_id()
         stage_profiling = ProfilingData[self._task.task_id, "general"].nest(
@@ -387,12 +395,21 @@ class TaskProcessor:
                 available_bands,
             )
         logger.info(
-            'Time consuming to gen a subtask graph is %ss with session id %s, '
-            'task id %s, stage id %s', timer.duration, self._task.session_id,
-            self._task.task_id, stage_id)
-        self._subtask_graph_gen_time.record(timer.duration, {
-            'session_id': self._task.session_id, 'task_id': self._task.task_id,
-            'stage_id': stage_id})
+            "Time consuming to gen a subtask graph is %ss with session id %s, "
+            "task id %s, stage id %s",
+            timer.duration,
+            self._task.session_id,
+            self._task.task_id,
+            stage_id,
+        )
+        self._subtask_graph_gen_time.record(
+            timer.duration,
+            {
+                "session_id": self._task.session_id,
+                "task_id": self._task.task_id,
+                "stage_id": stage_id,
+            },
+        )
 
         stage_profiling.set(f"gen_subtask_graph({len(subtask_graph)})", timer.duration)
 
@@ -435,12 +452,15 @@ class TaskProcessor:
             self.result.traceback = tb
         cost_time_secs = self.result.end_time - self.result.start_time
         logger.info(
-            'Time consuming to execute a task is %ss with session '
-            'id %s, task id %s',
-            cost_time_secs, self._task.session_id, self._task.task_id)
-        self._task_execution_time.record(cost_time_secs,
-                                         {'session_id': self._task.session_id,
-                                          'task_id': self._task.task_id})
+            "Time consuming to execute a task is %ss with session " "id %s, task id %s",
+            cost_time_secs,
+            self._task.session_id,
+            self._task.task_id,
+        )
+        self._task_execution_time.record(
+            cost_time_secs,
+            {"session_id": self._task.session_id, "task_id": self._task.task_id},
+        )
 
     def finish(self):
         self.done.set()

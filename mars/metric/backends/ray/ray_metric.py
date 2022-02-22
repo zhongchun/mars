@@ -7,15 +7,17 @@ ray_metrics = lazy_import("ray.util.metrics")
 
 # Note: Gauge record method will be deprecated in new ray version, so here
 # make it compatible with the old and new ray version.
-RAY_GAUGE_SET_AVAILABLE = True if ray_metrics and hasattr(ray_metrics.Gauge,
-                                                          'set') else False
+RAY_GAUGE_SET_AVAILABLE = (
+    True if ray_metrics and hasattr(ray_metrics.Gauge, "set") else False
+)
 
 
 class RayMetric(Metric):
     def _init(self):
         if ray_metrics:
-            self._metric = ray_metrics.Gauge(self._name, self._description,
-                                             self._tag_keys)
+            self._metric = ray_metrics.Gauge(
+                self._name, self._description, self._tag_keys
+            )
 
     def _record(self, value=1, tags: Optional[Dict[str, str]] = None):
         if RAY_GAUGE_SET_AVAILABLE:

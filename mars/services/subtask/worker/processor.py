@@ -103,9 +103,10 @@ class SubtaskProcessor:
 
         # metrics
         self._subtask_execution_time = Metrics.gauge(
-            'mars.subtask_execution_time_secs',
-            'Time consuming in seconds to execute a subtask',
-            ('session_id', 'subtask_id', 'logic_id'))
+            "mars.subtask_execution_time_secs",
+            "Time consuming in seconds to execute a subtask",
+            ("session_id", "subtask_id", "logic_id"),
+        )
 
     @property
     def status(self):
@@ -499,16 +500,20 @@ class SubtaskProcessor:
 
         await self.done()
         if self.result.status == SubtaskStatus.succeeded:
-            cost_time_secs = self.result.execution_end_time - \
-                             self.result.execution_start_time
+            cost_time_secs = (
+                self.result.execution_end_time - self.result.execution_start_time
+            )
             logger.info(
-                'Time consuming to execute a subtask is %ss with session_id '
-                '%s, subtask_id %s',
-                cost_time_secs, self._session_id, self.subtask.subtask_id)
-            self._subtask_execution_time.record(cost_time_secs,
-                                                {'session_id': self._session_id,
-                                                 'subtask_id':
-                                                     self.subtask.subtask_id})
+                "Time consuming to execute a subtask is %ss with session_id "
+                "%s, subtask_id %s",
+                cost_time_secs,
+                self._session_id,
+                self.subtask.subtask_id,
+            )
+            self._subtask_execution_time.record(
+                cost_time_secs,
+                {"session_id": self._session_id, "subtask_id": self.subtask.subtask_id},
+            )
         report_progress.cancel()
         try:
             await report_progress

@@ -87,9 +87,10 @@ class TaskStageProcessor:
 
         # metrics
         self._stage_execution_time = Metrics.gauge(
-            'mars.stage_execution_time_secs',
-            'Time consuming in seconds to execute a stage',
-            ('session_id', 'task_id', 'stage_id'))
+            "mars.stage_execution_time_secs",
+            "Time consuming in seconds to execute a stage",
+            ("session_id", "task_id", "stage_id"),
+        )
 
     def is_cancelled(self):
         return self._cancelled.is_set()
@@ -174,14 +175,21 @@ class TaskStageProcessor:
                 self._schedule_done()
                 cost_time_secs = self.result.end_time - self.result.start_time
                 logger.info(
-                    'Time consuming to execute a stage is %ss with '
-                    'session id %s, task id %s, stage id %s',
-                    cost_time_secs, self.result.session_id, self.result.task_id,
-                    self.result.stage_id)
-                self._stage_execution_time.record(cost_time_secs, {
-                    'session_id': self.result.session_id,
-                    'task_id': self.result.task_id,
-                    'stage_id': self.result.stage_id})
+                    "Time consuming to execute a stage is %ss with "
+                    "session id %s, task id %s, stage id %s",
+                    cost_time_secs,
+                    self.result.session_id,
+                    self.result.task_id,
+                    self.result.stage_id,
+                )
+                self._stage_execution_time.record(
+                    cost_time_secs,
+                    {
+                        "session_id": self.result.session_id,
+                        "task_id": self.result.task_id,
+                        "stage_id": self.result.stage_id,
+                    },
+                )
         else:
             # not terminated, push success subtasks to queue if they are ready
             to_schedule_subtasks = []

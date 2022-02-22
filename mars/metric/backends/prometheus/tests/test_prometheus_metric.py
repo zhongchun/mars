@@ -3,8 +3,7 @@ import time
 import pytest
 import requests
 
-from ..prometheus_metric import CounterImpl, GaugeImpl, \
-    HistogramImpl, MeterImpl
+from ..prometheus_metric import CounterImpl, GaugeImpl, HistogramImpl, MeterImpl
 
 from prometheus_client import start_http_server
 
@@ -17,8 +16,7 @@ def start_prometheus_http_server():
 
 
 def verify_metric(name, value, delta=1e-6):
-    resp = requests.get(
-        "http://127.0.0.1:{}".format(_PROMETHEUS_CLIENT_PORT)).text
+    resp = requests.get("http://127.0.0.1:{}".format(_PROMETHEUS_CLIENT_PORT)).text
     assert name in resp
     lines = resp.splitlines()
     for line in lines:
@@ -29,8 +27,7 @@ def verify_metric(name, value, delta=1e-6):
 
 
 def test_counter(start_prometheus_http_server):
-    c = CounterImpl("test_counter", "A test counter",
-                    ("service", "tenant"))
+    c = CounterImpl("test_counter", "A test counter", ("service", "tenant"))
     c.record(1, {"service": "mars", "tenant": "test"})
     verify_metric("test_counter", 1.0)
     c.record(2, {"service": "mars", "tenant": "test"})

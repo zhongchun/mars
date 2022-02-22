@@ -758,9 +758,10 @@ class _IsolatedSession(AbstractAsyncSession):
 
         # metrics
         self._tileable_graph_gen_time = Metrics.gauge(
-            'mars.tileable_graph_gen_time_secs',
-            'Time consuming in seconds to generate a tileable graph',
-            ('address', 'session_id'))
+            "mars.tileable_graph_gen_time_secs",
+            "Time consuming in seconds to generate a tileable graph",
+            ("address", "session_id"),
+        )
 
     @classmethod
     async def _init(
@@ -935,11 +936,15 @@ class _IsolatedSession(AbstractAsyncSession):
         tileable_graph = gen_submit_tileable_graph(self, tileables)
         cost_time_secs = time.time() - start_time
         logger.info(
-            'Time consuming to generate a tileable graph is %ss with address '
-            '%s, session id %s', cost_time_secs, self.address, self._session_id)
-        self._tileable_graph_gen_time.record(cost_time_secs,
-                                             {'address': self.address,
-                                              'session_id': self._session_id})
+            "Time consuming to generate a tileable graph is %ss with address "
+            "%s, session id %s",
+            cost_time_secs,
+            self.address,
+            self._session_id,
+        )
+        self._tileable_graph_gen_time.record(
+            cost_time_secs, {"address": self.address, "session_id": self._session_id}
+        )
 
         # submit task
         task_id = await self._task_api.submit_tileable_graph(

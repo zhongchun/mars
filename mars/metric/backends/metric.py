@@ -30,10 +30,12 @@ class MutexValue(object):
 
 class Metric(ABC):
     """Base class of metrics."""
+
     _type = None
 
-    def __init__(self, name: str, description: str = '',
-                 tag_keys: Optional[Tuple[str]] = None):
+    def __init__(
+        self, name: str, description: str = "", tag_keys: Optional[Tuple[str]] = None
+    ):
         self._name = name
         self._description = description
         self._tag_keys = tuple(tag_keys) if tag_keys else tuple()
@@ -65,10 +67,9 @@ class Metric(ABC):
         pass
 
     @abstractmethod
-    def _record(self, value: float = 1.0,
-                tags: Optional[Dict[str, str]] = None):
+    def _record(self, value: float = 1.0, tags: Optional[Dict[str, str]] = None):
         """An internal method called by record() and should be
-            implemented by different metric backends.
+        implemented by different metric backends.
         """
         pass
 
@@ -76,10 +77,11 @@ class Metric(ABC):
 class Counter(Metric, ABC):
     """A counter records the counts of events."""
 
-    _type = 'counter'
+    _type = "counter"
 
-    def __init__(self, name: str, description: str = '',
-                 tag_keys: Optional[Tuple[str]] = None):
+    def __init__(
+        self, name: str, description: str = "", tag_keys: Optional[Tuple[str]] = None
+    ):
         super().__init__(name, description, tag_keys)
         self._count = MutexValue()
 
@@ -90,10 +92,10 @@ class Counter(Metric, ABC):
 
 class Gauge(Metric, ABC):
     """A gauge represents a single numerical value that can be
-        arbitrarily set.
+    arbitrarily set.
     """
 
-    _type = 'gauge'
+    _type = "gauge"
 
     def record(self, value=1, tags: Optional[Dict[str, str]] = None):
         self._record(value, tags)
@@ -102,10 +104,11 @@ class Gauge(Metric, ABC):
 class Meter(Metric, ABC):
     """A meter measures the rate at which a set of events occur."""
 
-    _type = 'meter'
+    _type = "meter"
 
-    def __init__(self, name: str, description: str = '',
-                 tag_keys: Optional[Tuple[str]] = None):
+    def __init__(
+        self, name: str, description: str = "", tag_keys: Optional[Tuple[str]] = None
+    ):
         super().__init__(name, description, tag_keys)
         self._count = MutexValue()
         self._last_time = time.time()
@@ -124,10 +127,11 @@ class Meter(Metric, ABC):
 class Histogram(Metric, ABC):
     """A Histogram measures the distribution of values in a stream of data."""
 
-    _type = 'histogram'
+    _type = "histogram"
 
-    def __init__(self, name: str, description: str = '',
-                 tag_keys: Optional[Tuple[str]] = None):
+    def __init__(
+        self, name: str, description: str = "", tag_keys: Optional[Tuple[str]] = None
+    ):
         super().__init__(name, description, tag_keys)
         self._data = list()
         self._last_time = time.time()
@@ -135,8 +139,10 @@ class Histogram(Metric, ABC):
     def record(self, value=1, tags: Optional[Dict[str, str]] = None):
         self._data.append(value)
         now = time.time()
-        if len(self._data) >= _THRESHOLD \
-                or now - self._last_time >= _RECORDED_INTERVAL_SECS:
+        if (
+            len(self._data) >= _THRESHOLD
+            or now - self._last_time >= _RECORDED_INTERVAL_SECS
+        ):
             avg = sum(self._data) / len(self._data)
             self._record(avg, tags)
             self._data.clear()
