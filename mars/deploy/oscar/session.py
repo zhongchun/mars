@@ -941,10 +941,10 @@ class _IsolatedSession(AbstractAsyncSession):
             tileable_graph = gen_submit_tileable_graph(self, tileables)
 
         logger.info(
-            "Time consuming to generate a tileable graph is %ss with address %s, session id %s",
-            timer.duration,
+            "Generating a tileable graph with address %s, session id %s took %s seconds",
             self.address,
             self._session_id,
+            timer.duration,
         )
         self._tileable_graph_gen_time.record(
             timer.duration, {"address": self.address, "session_id": self._session_id}

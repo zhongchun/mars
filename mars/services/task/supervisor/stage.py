@@ -175,12 +175,11 @@ class TaskStageProcessor:
                 self._schedule_done()
                 cost_time_secs = self.result.end_time - self.result.start_time
                 logger.info(
-                    "Time consuming to execute a stage is %ss with "
-                    "session id %s, task id %s, stage id %s",
-                    cost_time_secs,
+                    "Executing stage %s with session id %s, task id % took %s seconds",
+                    self.result.stage_id,
                     self.result.session_id,
                     self.result.task_id,
-                    self.result.stage_id,
+                    cost_time_secs,
                 )
                 self._stage_execution_time.record(
                     cost_time_secs,

@@ -506,10 +506,10 @@ class SubtaskProcessor:
                 self.result.execution_end_time - self.result.execution_start_time
             )
             logger.info(
-                "Time consuming to execute a subtask is %ss with session_id %s, subtask_id %s",
-                cost_time_secs,
-                self._session_id,
+                "Executing subtask %s with session id %s took %s seconds",
                 self.subtask.subtask_id,
+                self._session_id,
+                cost_time_secs,
             )
             self._subtask_execution_time.record(
                 cost_time_secs,
